@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Favourites - DreamHome</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🏠 DreamHome</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/properties">Properties</a>
+        <a href="/add-property">List Property</a>
+        <a href="/favourites">❤️ Favourites</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="section-title">❤️ My Favourites</h2>
+    <div id="favouritesList" class="properties-grid"></div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+async function loadFavourites() {
+    const res = await fetch('/get-favourites');
+    const properties = await res.json();
+    const div = document.getElementById('favouritesList');
+    div.innerHTML = '';
+
+    if (properties.length === 0) {
+        div.innerHTML = `
+            <div class="empty-state">
+                <div style="font-size:4rem">❤️</div>
+                <h3>No favourites yet!</h3>
+                <p>Browse properties and save your favourites</p>
+                <a href="/properties">
+                    <button class="btn-primary">Browse Properties</button>
+                </a>
+            </div>
+        `;
+        return;
+    }
+
+    properties.forEach(p => {
+        div.innerHTML += createPropertyCard(p, true);
+    });
+}
+
+loadFavourites();
+</script>
+</body>
+</html>

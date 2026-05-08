@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - RealEstate</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-logo">🏠</div>
+    <h1>Create Account</h1>
+    <p class="auth-subtitle">Join thousands of property seekers!</p>
+
+    <select id="role">
+        <option value="buyer">🔍 Buyer / Renter</option>
+        <option value="agent">🏢 Property Agent</option>
+    </select>
+
+    <input type="text" id="username" placeholder="Username">
+    <input type="email" id="email" placeholder="Email">
+    <div class="password-container">
+    <input type="password" id="password" placeholder="Password">
+    <span onclick="togglePassword('password')" class="eye-btn">👁️</span>
+</div>
+    <button onclick="register()">Create Account</button>
+    <p class="auth-link">
+        Already have an account? <a href="/login">Login</a>
+    </p>
+    <p id="message"></p>
+</div>
+
+<script>
+async function register() {
+    const role = document.getElementById('role').value;
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (!username || !email || !password) {
+        showMessage('Please fill in all fields!', 'red');
+        return;
+    }
+
+    const res = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password, role })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+        window.location.href = '/login';
+    } else {
+        showMessage(data.message, 'red');
+    }
+}
+
+function showMessage(msg, color) {
+    const el = document.getElementById('message');
+    el.textContent = msg;
+    el.style.color = color;
+}
+</script>
+</body>
+</html>

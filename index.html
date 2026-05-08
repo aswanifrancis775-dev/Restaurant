@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RealEstate - Find Your Dream Home</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🏠 DreamHome</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/properties">Properties</a>
+        <a href="/add-property">List Property</a>
+        <a href="/favourites">❤️ Favourites</a>
+        <a href="/profile">Profile</a>
+        <a href="/admin">Admin</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+    <div class="hero-content">
+        <h1>Find Your Dream Home</h1>
+        <p>Discover thousands of properties for sale and rent</p>
+        <div class="search-bar">
+            <input type="text" id="searchInput" 
+                placeholder="Search by location, type...">
+            <select id="listingFilter">
+                <option value="">Buy or Rent?</option>
+                <option value="Sale">For Sale</option>
+                <option value="Rent">For Rent</option>
+            </select>
+            <button onclick="searchProperties()">🔍 Search</button>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number" id="totalProps">0</div>
+        <div class="stat-label">Properties Listed</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" id="forSale">0</div>
+        <div class="stat-label">For Sale</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" id="forRent">0</div>
+        <div class="stat-label">For Rent</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Happy Clients</div>
+    </div>
+</div>
+
+<!-- Featured Properties -->
+<div class="container">
+    <h2 class="section-title">Featured Properties</h2>
+    <div id="featuredProperties" class="properties-grid"></div>
+    <div style="text-align:center; margin-top:30px;">
+        <a href="/properties">
+            <button class="btn-primary">View All Properties</button>
+        </a>
+    </div>
+</div>
+
+<!-- Why Choose Us -->
+<div class="features-section">
+    <h2 class="section-title" style="text-align:center;">Why Choose DreamHome?</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Easy Search</h3>
+            <p>Find your perfect property with our advanced search filters</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h3>Verified Listings</h3>
+            <p>All properties are verified by our team of experts</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Best Prices</h3>
+            <p>Get the best deals on properties across the country</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3>Trusted Agents</h3>
+            <p>Connect with trusted and experienced property agents</p>
+        </div>
+    </div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+    loadFeaturedProperties();
+    loadHomeStats();
+</script>
+</body>
+</html>

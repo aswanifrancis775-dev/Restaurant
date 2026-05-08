@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile - DreamHome</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🏠 DreamHome</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/properties">Properties</a>
+        <a href="/add-property">List Property</a>
+        <a href="/favourites">❤️ Favourites</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="section-title">My Profile</h2>
+
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-avatar">🏠</div>
+            <div class="profile-info">
+                <h3 id="profileUsername"></h3>
+                <p id="profileEmail"></p>
+                <span class="role-badge" id="profileRole"></span>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <h3>Update Profile</h3>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" id="phone" 
+                    placeholder="Your phone number">
+            </div>
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea id="bio" rows="4"
+                    placeholder="Tell us about yourself..."></textarea>
+            </div>
+            <button class="btn-primary" onclick="updateProfile()">
+                Update Profile
+            </button>
+            <p id="message"></p>
+        </div>
+
+        <div id="myProperties">
+            <h3>My Listed Properties</h3>
+            <div id="myPropertiesList" class="properties-grid"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+async function loadProfile() {
+    const res = await fetch('/get-profile');
+    const data = await res.json();
+
+    document.getElementById('profileUsername').textContent = data.username;
+    document.getElementById('profileEmail').textContent = data.email;
+    document.getElementById('profileRole').textContent = data.role;
+    document.getElementById('phone').value = data.phone || '';
+    document.getElementById('bio').value = data.bio || '';
+}
+
+async function updateProfile() {
+    const phone = document.getElementById('phone').value;
+    const bio = document.getElementById('bio').value;
+
+    const res = await fetch('/update-profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, bio })
+    });
+
+    const data = await res.json();
+    const msg = document.getElementById('message');
+    msg.textContent = data.message;
+    msg.style.color = res.ok ? 'green' : 'red';
+}
+
+async function loadMyProperties() {
+    const res = await fetch('/get-properties');
+    const properties = await res.json();
+    const div = document.getElementById('myPropertiesList');
+    div.innerHTML = '';
+
+    if (properties.length === 0) {
+        div.innerHTML = '<p>No properties listed yet!</p>';
+        return;
+    }
+
+    properties.forEach(p => {
+        div.innerHTML += createPropertyCard(p, false);
+    });
+}
+
+loadProfile();
+loadMyProperties();
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - DreamHome</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🏠 DreamHome</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/properties">Properties</a>
+        <a href="/admin">Admin</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="section-title">Admin Dashboard</h2>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">🏠</div>
+            <div class="stat-value" id="totalProperties">0</div>
+            <div class="stat-label">Total Properties</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value" id="totalUsers">0</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">❤️</div>
+            <div class="stat-value" id="totalFavourites">0</div>
+            <div class="stat-label">Total Favourites</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✉️</div>
+            <div class="stat-value" id="totalMessages">0</div>
+            <div class="stat-label">Total Messages</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="forSale">0</div>
+            <div class="stat-label">For Sale</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🔑</div>
+            <div class="stat-value" id="forRent">0</div>
+            <div class="stat-label">For Rent</div>
+        </div>
+    </div>
+
+    <!-- All Properties -->
+    <div class="admin-section">
+        <h3>All Properties</h3>
+        <div id="adminProperties" class="properties-grid"></div>
+    </div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+async function loadStats() {
+    const res = await fetch('/get-stats');
+    const data = await res.json();
+
+    document.getElementById('totalProperties').textContent = data.total_properties;
+    document.getElementById('totalUsers').textContent = data.total_users;
+    document.getElementById('totalFavourites').textContent = data.total_favourites;
+    document.getElementById('totalMessages').textContent = data.total_messages;
+    document.getElementById('forSale').textContent = data.for_sale;
+    document.getElementById('forRent').textContent = data.for_rent;
+}
+
+async function loadAdminProperties() {
+    const res = await fetch('/get-properties');
+    const properties = await res.json();
+    const div = document.getElementById('adminProperties');
+    div.innerHTML = '';
+
+    properties.forEach(p => {
+        div.innerHTML += `
+            <div class="property-card">
+                <div class="property-badge ${p.listing_type === 'Sale' ? 'sale' : 'rent'}">
+                    ${p.listing_type === 'Sale' ? 'For Sale' : 'For Rent'}
+                </div>
+                <div class="property-body">
+                    <h3>${p.title}</h3>
+                    <p>📍 ${p.location}</p>
+                    <p>👤 Agent: ${p.agent}</p>
+                    <div class="property-price">
+                        $${p.price.toLocaleString()}
+                        ${p.listing_type === 'Rent' ? '/month' : ''}
+                    </div>
+                    <button class="btn-danger" 
+                        onclick="deleteProperty(${p.id})">
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+async function deleteProperty(id) {
+    if (!confirm('Are you sure you want to delete this property?')) return;
+
+    const res = await fetch(`/delete-property/${id}`, {
+        method: 'DELETE'
+    });
+    const data = await res.json();
+    alert(data.message);
+    loadAdminProperties();
+    loadStats();
+}
+
+loadStats();
+loadAdminProperties();
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Property - DreamHome</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🏠 DreamHome</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/properties">Properties</a>
+        <a href="/add-property">List Property</a>
+        <a href="/favourites">❤️ Favourites</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div id="propertyDetails"></div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+    const propertyId = {{ property.id }};
+    loadPropertyDetails(propertyId);
+</script>
+</body>
+</html>

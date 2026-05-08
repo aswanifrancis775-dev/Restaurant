@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - RealEstate</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-logo">🏠</div>
+    <h1>Welcome Back!</h1>
+    <p class="auth-subtitle">Login to find your dream property</p>
+
+    <input type="email" id="email" placeholder="Email">
+    <div class="password-container">
+    <input type="password" id="password" placeholder="Password">
+    <span onclick="togglePassword('password')" class="eye-btn">👁️</span>
+</div>
+    <button onclick="login()">Login</button>
+    <p class="auth-link">
+        Don't have an account? <a href="/register">Register</a>
+    </p>
+    <p id="message"></p>
+</div>
+
+<script>
+async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) {
+        showMessage('Please fill in all fields!', 'red');
+        return;
+    }
+
+    const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+        window.location.href = '/';
+    } else {
+        showMessage(data.message, 'red');
+    }
+}
+
+function showMessage(msg, color) {
+    const el = document.getElementById('message');
+    el.textContent = msg;
+    el.style.color = color;
+}
+
+document.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') login();
+});
+</script>
+</body>
+</html>

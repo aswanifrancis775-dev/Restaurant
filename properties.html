@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Properties - DreamHome</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🏠 DreamHome</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/properties">Properties</a>
+        <a href="/add-property">List Property</a>
+        <a href="/favourites">❤️ Favourites</a>
+        <a href="/profile">Profile</a>
+        <a href="/admin">Admin</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="section-title">All Properties</h2>
+
+    <!-- Filters -->
+    <div class="filters-container">
+        <input type="text" id="searchInput" placeholder="Search location, title...">
+        <select id="typeFilter">
+            <option value="">All Types</option>
+            <option value="Apartment">Apartment</option>
+            <option value="House">House</option>
+            <option value="Villa">Villa</option>
+            <option value="Studio">Studio</option>
+            <option value="Cottage">Cottage</option>
+            <option value="Commercial">Commercial</option>
+        </select>
+        <select id="listingFilter">
+            <option value="">Sale or Rent</option>
+            <option value="Sale">For Sale</option>
+            <option value="Rent">For Rent</option>
+        </select>
+        <select id="bedroomsFilter">
+            <option value="">Bedrooms</option>
+            <option value="1">1 Bedroom</option>
+            <option value="2">2 Bedrooms</option>
+            <option value="3">3 Bedrooms</option>
+            <option value="4">4+ Bedrooms</option>
+        </select>
+        <input type="number" id="minPrice" placeholder="Min Price">
+        <input type="number" id="maxPrice" placeholder="Max Price">
+        <button class="btn-primary" onclick="filterProperties()">
+            🔍 Filter
+        </button>
+        <button class="btn-secondary" onclick="resetFilters()">
+            Reset
+        </button>
+    </div>
+
+    <div id="propertiesCount" class="results-count"></div>
+    <div id="propertiesList" class="properties-grid"></div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+    loadAllProperties();
+
+    function filterProperties() {
+        const search = document.getElementById('searchInput').value;
+        const type = document.getElementById('typeFilter').value;
+        const listing = document.getElementById('listingFilter').value;
+        const bedrooms = document.getElementById('bedroomsFilter').value;
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        loadProperties(search, type, listing, bedrooms, minPrice, maxPrice);
+    }
+
+    function resetFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('typeFilter').value = '';
+        document.getElementById('listingFilter').value = '';
+        document.getElementById('bedroomsFilter').value = '';
+        document.getElementById('minPrice').value = '';
+        document.getElementById('maxPrice').value = '';
+        loadAllProperties();
+    }
+</script>
+</body>
+</html>
