@@ -791,4 +791,30 @@ nav {
     cursor: pointer;
     font-size: 1.2rem;
     user-select: none;
+}@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-links a {
+        padding: 8px 0;
+    }
+
+    .hero {
+        padding: 40px 20px;
+    }
+
+    .properties-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
 }
