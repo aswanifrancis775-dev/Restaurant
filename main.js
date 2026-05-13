@@ -266,3 +266,9 @@ async function loadHomeStats() {
         document.getElementById('forRent').textContent = data.for_rent;
     }
 }
+function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('active');
+}
+function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('active');
+}

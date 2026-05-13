@@ -11,17 +11,17 @@
 
 <nav>
     <div class="nav-logo">🏠 DreamHome</div>
-    <div class="nav-links">
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+    <div class="nav-links" id="navLinks">
         <a href="index.html">Home</a>
         <a href="properties.html">Properties</a>
-        <a href="add-property.html">list property</a>
+        <a href="add-property.html">List Property</a>
         <a href="favourites.html">Favourites</a>
         <a href="profile.html">Profile</a>
         <a href="admin.html">Admin</a>
         <a href="login.html">Logout</a>
     </div>
 </nav>
-
 <!-- Hero -->
 <div class="hero">
     <div class="hero-content">
@@ -98,7 +98,7 @@
     </div>
 </div>
 
-<script src="/static/main.js"></script>
+<script src="main.js"></script>
 <script>
     loadFeaturedProperties();
     loadHomeStats();

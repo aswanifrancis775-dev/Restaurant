@@ -862,4 +862,25 @@ nav {
     .features-grid {
         grid-template-columns: 1fr 1fr;
     }
+}.hamburger {
+    display: none;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+    }
+    .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+    }
+    .nav-links.active {
+        display: flex;
+    }
 }
