@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders - Restaurant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🍽️ DeliciousEats</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/cart">Cart 🛒</a>
+        <a href="/orders">My Orders</a>
+        <a href="/booking">Book Table</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="section-title">My Orders</h2>
+    <div id="ordersList"></div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+async function loadOrders() {
+    const res = await fetch('/get-orders');
+    const orders = await res.json();
+    const div = document.getElementById('ordersList');
+    div.innerHTML = '';
+
+    if (orders.length === 0) {
+        div.innerHTML = `
+            <div class="empty-cart">
+                <div style="font-size:4rem">📋</div>
+                <h3>No orders yet!</h3>
+                <p>Place your first order from our menu</p>
+                <a href="/menu"><button class="btn-primary">Browse Menu</button></a>
+            </div>
+        `;
+        return;
+    }
+
+    orders.forEach(order => {
+        const statusColor = {
+            'Pending': '#ff9800',
+            'Preparing': '#2196f3',
+            'Ready': '#4caf50',
+            'Delivered': '#9c27b0'
+        };
+
+        const paymentColor = {
+            'Unpaid': '#f44336',
+            'Paid': '#4caf50'
+        };
+
+        div.innerHTML += `
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Order #${order.id}</h3>
+                        <p>📅 ${order.date}</p>
+                    </div>
+                    <div>
+                        <span class="status-badge" 
+                            style="background:${statusColor[order.status] || '#666'}">
+                            ${order.status}
+                        </span>
+                        <span class="status-badge" 
+                            style="background:${paymentColor[order.payment_status] || '#666'}; margin-left:8px">
+                            ${order.payment_status}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="order-items">
+                    ${order.items.map(item => `
+                        <div class="order-item">
+                            <span>${item.name} x${item.quantity}</span>
+                            <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="order-total">
+                    <strong>Total: $${order.total.toFixed(2)}</strong>
+                </div>
+            </div>
+        `;
+    });
+}
+
+loadOrders();
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book a Table - Restaurant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🍽️ DeliciousEats</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/cart">Cart 🛒</a>
+        <a href="/orders">My Orders</a>
+        <a href="/booking">Book Table</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="section-title">Book a Table</h2>
+
+    <div class="booking-container">
+        <div class="form-container">
+            <h3>Make a Reservation</h3>
+            <input type="date" id="date" min="">
+            <select id="time">
+                <option value="">Select Time</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="1:00 PM">1:00 PM</option>
+                <option value="2:00 PM">2:00 PM</option>
+                <option value="3:00 PM">3:00 PM</option>
+                <option value="6:00 PM">6:00 PM</option>
+                <option value="7:00 PM">7:00 PM</option>
+                <option value="8:00 PM">8:00 PM</option>
+                <option value="9:00 PM">9:00 PM</option>
+            </select>
+            <select id="guests">
+                <option value="">Number of Guests</option>
+                <option value="1">1 Person</option>
+                <option value="2">2 People</option>
+                <option value="3">3 People</option>
+                <option value="4">4 People</option>
+                <option value="5">5 People</option>
+                <option value="6">6 People</option>
+                <option value="7">7 People</option>
+                <option value="8">8 People</option>
+            </select>
+            <textarea id="special_request" 
+                placeholder="Any special requests? (allergies, celebrations, etc.)" 
+                rows="4"></textarea>
+            <button class="btn-primary" onclick="makeBooking()">
+                Book Table 📅
+            </button>
+            <p id="message"></p>
+        </div>
+
+        <div class="bookings-list">
+            <h3>My Bookings</h3>
+            <div id="bookingsList"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+    // Set minimum date to today
+    document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+    async function makeBooking() {
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        const guests = document.getElementById('guests').value;
+        const special_request = document.getElementById('special_request').value;
+
+        if (!date || !time || !guests) {
+            showMessage('Please fill in all required fields!', 'red');
+            return;
+        }
+
+        const res = await fetch('/make-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ date, time, guests: parseInt(guests), special_request })
+        });
+
+        const data = await res.json();
+        showMessage(data.message, res.ok ? 'green' : 'red');
+
+        if (res.ok) {
+            document.getElementById('date').value = '';
+            document.getElementById('time').value = '';
+            document.getElementById('guests').value = '';
+            document.getElementById('special_request').value = '';
+            loadBookings();
+        }
+    }
+
+    async function loadBookings() {
+        const res = await fetch('/get-bookings');
+        const bookings = await res.json();
+        const div = document.getElementById('bookingsList');
+        div.innerHTML = '';
+
+        if (bookings.length === 0) {
+            div.innerHTML = '<p>No bookings yet!</p>';
+            return;
+        }
+
+        const statusColor = {
+            'Pending': '#ff9800',
+            'Confirmed': '#4caf50',
+            'Cancelled': '#f44336'
+        };
+
+        bookings.forEach(booking => {
+            div.innerHTML += `
+                <div class="booking-card">
+                    <div class="booking-header">
+                        <div>
+                            <h4>📅 ${booking.date} at ${booking.time}</h4>
+                            <p>👥 ${booking.guests} guests</p>
+                            ${booking.special_request ? 
+                                `<p>📝 ${booking.special_request}</p>` : ''}
+                        </div>
+                        <span class="status-badge" 
+                            style="background:${statusColor[booking.status] || '#666'}">
+                            ${booking.status}
+                        </span>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function showMessage(msg, color) {
+        const el = document.getElementById('message');
+        el.textContent = msg;
+        el.style.color = color;
+    }
+
+    loadBookings();
+</script>
+</body>
+</html>

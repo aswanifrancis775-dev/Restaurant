@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Restaurant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🍽️ DeliciousEats</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/cart">Cart 🛒</a>
+        <a href="/orders">My Orders</a>
+        <a href="/booking">Book Table</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero">
+    <div class="hero-content">
+        <h1>Welcome to DeliciousEats</h1>
+        <p>Experience the finest dining with authentic flavors</p>
+        <div class="hero-buttons">
+            <a href="/menu"><button class="btn-primary">View Menu</button></a>
+            <a href="/booking"><button class="btn-secondary">Book a Table</button></a>
+        </div>
+    </div>
+</div>
+
+<!-- Features -->
+<div class="features">
+    <div class="feature-card">
+        <div class="feature-icon">🍲</div>
+        <h3>Fresh Food</h3>
+        <p>All our meals are prepared fresh daily with quality ingredients</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Fast Service</h3>
+        <p>Quick and efficient service to satisfy your hunger</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Best Prices</h3>
+        <p>Affordable prices without compromising on quality</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Easy Ordering</h3>
+        <p>Order online and track your food in real time</p>
+    </div>
+</div>
+
+<!-- Popular Items -->
+<div class="container">
+    <h2 class="section-title">Popular Items</h2>
+    <div id="popularItems" class="menu-grid"></div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+    loadPopularItems();
+</script>
+</body>
+</html>

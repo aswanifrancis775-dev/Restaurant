@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - Restaurant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🍽️ DeliciousEats</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/admin">Admin</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="section-title">Admin Dashboard</h2>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-value" id="totalOrders">0</div>
+            <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="totalRevenue">$0</div>
+            <div class="stat-label">Total Revenue</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value" id="totalBookings">0</div>
+            <div class="stat-label">Total Bookings</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value" id="totalCustomers">0</div>
+            <div class="stat-label">Total Customers</div>
+        </div>
+    </div>
+
+    <!-- Add Menu Item -->
+    <div class="admin-section">
+        <h3>Add Menu Item</h3>
+        <div class="form-container">
+            <input type="text" id="itemName" placeholder="Item Name">
+            <input type="text" id="itemDescription" placeholder="Description">
+            <input type="number" id="itemPrice" placeholder="Price">
+            <select id="itemCategory">
+                <option value="">Select Category</option>
+                <option value="Main Course">Main Course</option>
+                <option value="Soups">Soups</option>
+                <option value="Sides">Sides</option>
+                <option value="Drinks">Drinks</option>
+                <option value="Desserts">Desserts</option>
+            </select>
+            <button class="btn-primary" onclick="addMenuItem()">Add Item</button>
+            <p id="menuMessage"></p>
+        </div>
+    </div>
+
+    <!-- Manage Orders -->
+    <div class="admin-section">
+        <h3>Manage Orders</h3>
+        <div id="adminOrders"></div>
+    </div>
+
+    <!-- Manage Bookings -->
+    <div class="admin-section">
+        <h3>Manage Bookings</h3>
+        <div id="adminBookings"></div>
+    </div>
+</div>
+
+<script src="/static/main.js"></script>
+<script>
+async function loadStats() {
+    const res = await fetch('/get-stats');
+    const data = await res.json();
+    document.getElementById('totalOrders').textContent = data.total_orders;
+    document.getElementById('totalRevenue').textContent = `$${data.total_revenue}`;
+    document.getElementById('totalBookings').textContent = data.total_bookings;
+    document.getElementById('totalCustomers').textContent = data.total_customers;
+}
+
+async function addMenuItem() {
+    const name = document.getElementById('itemName').value;
+    const description = document.getElementById('itemDescription').value;
+    const price = document.getElementById('itemPrice').value;
+    const category = document.getElementById('itemCategory').value;
+
+    if (!name || !price || !category) {
+        document.getElementById('menuMessage').textContent = 'Please fill required fields!';
+        document.getElementById('menuMessage').style.color = 'red';
+        return;
+    }
+
+    const res = await fetch('/add-menu-item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description, price: parseFloat(price), category })
+    });
+
+    const data = await res.json();
+    document.getElementById('menuMessage').textContent = data.message;
+    document.getElementById('menuMessage').style.color = res.ok ? 'green' : 'red';
+
+    if (res.ok) {
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemDescription').value = '';
+        document.getElementById('itemPrice').value = '';
+    }
+}
+
+async function loadAdminOrders() {
+    const res = await fetch('/get-orders');
+    const orders = await res.json();
+    const div = document.getElementById('adminOrders');
+    div.innerHTML = '';
+
+    orders.forEach(order => {
+        div.innerHTML += `
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Order #${order.id} — ${order.customer}</h3>
+                        <p>📅 ${order.date} | Total: $${order.total.toFixed(2)}</p>
+                    </div>
+                </div>
+                <div class="order-items">
+                    ${order.items.map(item => `
+                        <div class="order-item">
+                            <span>${item.name} x${item.quantity}</span>
+                            <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="admin-actions">
+                    <select onchange="updateOrderStatus(${order.id}, this.value, '${order.payment_status}')">
+                        <option ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option ${order.status === 'Preparing' ? 'selected' : ''}>Preparing</option>
+                        <option ${order.status === 'Ready' ? 'selected' : ''}>Ready</option>
+                        <option ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                    </select>
+                    <select onchange="updateOrderStatus(${order.id}, '${order.status}', this.value)">
+                        <option ${order.payment_status === 'Unpaid' ? 'selected' : ''}>Unpaid</option>
+                        <option ${order.payment_status === 'Paid' ? 'selected' : ''}>Paid</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    });
+}
+
+async function updateOrderStatus(id, status, payment_status) {
+    await fetch(`/update-order-status/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, payment_status })
+    });
+    loadAdminOrders();
+}
+
+async function loadAdminBookings() {
+    const res = await fetch('/get-bookings');
+    const bookings = await res.json();
+    const div = document.getElementById('adminBookings');
+    div.innerHTML = '';
+
+    bookings.forEach(booking => {
+        div.innerHTML += `
+            <div class="booking-card">
+                <div class="booking-header">
+                    <div>
+                        <h4>${booking.customer} — ${booking.date} at ${booking.time}</h4>
+                        <p>👥 ${booking.guests} guests</p>
+                        ${booking.special_request ?
+                            `<p>📝 ${booking.special_request}</p>` : ''}
+                    </div>
+                    <select onchange="updateBookingStatus(${booking.id}, this.value)">
+                        <option ${booking.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option ${booking.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+                        <option ${booking.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    });
+}
+
+async function updateBookingStatus(id, status) {
+    await fetch(`/update-booking-status/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    });
+    loadAdminBookings();
+}
+
+loadStats();
+loadAdminOrders();
+loadAdminBookings();
+</script>
+</body>
+</html>
